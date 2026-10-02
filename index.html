@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackMatch｜未央学社黑客松组队平台</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft Yahei",sans-serif;}
+body{background:linear-gradient(135deg,#f4f7fb 0%,#eef2f9 100%);color:#2d3748;line-height:1.7;}
+nav{background:linear-gradient(90deg,#162436,#243b55);padding:18px 0;box-shadow:0 4px 12px rgba(0,0,0,0.12);position:sticky;top:0;z-index:99;}
+.nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 24px;}
+.logo{color:#fff;font-size:24px;font-weight:bold;letter-spacing:1px;}
+.logo span{color:#60a5fa;}
+.nav-links a{color:#cbd5e1;text-decoration:none;margin-left:24px;font-size:15px;transition:all 0.3s ease;}
+.nav-links a:hover{color:#ffffff;text-shadow:0 0 8px #60a5fa55;}
+.container{max-width:1200px;margin:0 auto;padding:40px 24px;}
+.card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,0.07);margin-bottom:28px;transition:0.3s ease;}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.1);}
+.card h2{margin-bottom:18px;color:#1e293b;padding-bottom:10px;border-bottom:2px solid #3b82f633;display:inline-block;}
+.card h3{margin-bottom:16px;color:#27374d;}
+.search-box{display:flex;gap:12px;margin-bottom:26px;}
+#search-input{flex:1;padding:13px 18px;font-size:16px;border:1px solid #ccd0d8;border-radius:10px;outline:none;transition:0.3s;}
+#search-input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f622;}
+#search-btn{padding:13px 26px;background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:0.3s;}
+#search-btn:hover{transform:scale(1.03);}
+.recruit-list{display:grid;gap:20px;}
+.recruit-card{background:#fff;padding:22px;border-radius:12px;box-shadow:0 3px 10px #00000012;transition:0.3s;}
+.recruit-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,0.09);}
+.recruit-card h3{font-size:20px;margin-bottom:10px;}
+.meta{font-size:14px;color:#64748b;margin-bottom:12px;}
+.tag{display:inline-block;background:#dbeafe;color:#2563eb;padding:4px 10px;border-radius:99px;font-size:13px;margin-right:8px;}
+.highlight{background:#fef08a;padding:0 2px;}
+.empty-tip{text-align:center;padding:50px;color:#888;}
+form .row{margin-bottom:18px;}
+label{display:block;margin-bottom:7px;font-weight:500;}
+input,textarea,select{width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;transition:0.3s;}
+input:focus,textarea:focus,select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f622;outline:none;}
+textarea{min-height:100px;resize:vertical;}
+button.btn-blue{background:linear-gradient(90deg,#2563eb,#3b82f6);color:white;border:none;padding:12px 22px;border-radius:8px;cursor:pointer;transition:0.3s;}
+button.btn-blue:hover{transform:scale(1.02);}
+button.btn-gray{background:#6b7280;color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;transition:0.3s;}
+button.btn-green{background:linear-gradient(90deg,#059669,#10b981);color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;transition:0.3s;}
+button.btn-red{background:#dc2626;color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer;transition:0.3s;}
+.team-card{border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;transition:0.3s;}
+.team-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06);}
+.team-card h4{font-size:18px;margin-bottom:8px;}
+.status-pending{color:#d97706;font-weight:500;}
+.status-accept{color:#059669;font-weight:500;}
+.status-reject{color:#dc2626;font-weight:500;}
+.stat-row{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
+.stat-item{background:#eff6ff;padding:16px 22px;border-radius:10px;min-width:140px;}
+footer{background:linear-gradient(90deg,#162436,#243b55);color:#cbd5e1;text-align:center;padding:26px;margin-top:60px;}
+.section{display:none;animation:fadeIn 0.4s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.tip{font-size:14px;color:#666;margin:10px 0;}
+.publish-form-wrap{margin-top:20px;border:1px solid #cbd5e1;padding:24px;border-radius:12px;background:#f8fafc;}
+</style>
+</head>
+<body>
+<nav>
+<div class="nav-container">
+<div class="logo">HackMatch<span>.</span></div>
+<div class="nav-links">
+<a href="#" onclick="switchSection('home')">首页介绍</a>
+<a href="#" onclick="switchSection('signup')">学生注册</a>
+<a href="#" onclick="switchSection('login')">登录</a>
+<a href="#" onclick="switchSection('register')">活动报名</a>
+<a href="#" onclick="switchSection('recruit')">队伍招募大厅</a>
+<a href="#" onclick="switchSection('submitProject')">项目提交</a>
+<a href="#" onclick="switchSection('adminPanel')">管理统计</a>
+<a href="#" onclick="switchSection('about')">关于</a>
+</div>
+</div>
+</nav>
+<div class="container">
+<div id="home" class="section active">
+<div class="card">
+<h2>👋 HackMatch 未央学社黑客松组队平台</h2>
+<p>专为未央学社黑客松打造，解决活动报名零散、组队困难、项目材料杂乱的问题。</p>
+<br>
+<ul style="padding-left:24px;">
+<li>📝 学生账号注册登录，参与黑客松活动</li>
+<li>🤝 队伍招募大厅，发布招募帖，寻找队友</li>
+<li>👥 创建队伍，申请入队，队长审核申请</li>
+<li>✨ 智能匹配，系统推荐适合你的队友</li>
+<li>📦 项目提交，上传项目仓库与Demo链接</li>
+<li>📊 管理员查看全部报名、队伍、项目统计</li>
+</ul>
+<br>
+<p class="tip">⚠️ 当前为前端Mock演示版本，数据存储在浏览器LocalStorage，清除缓存数据丢失；生产环境需要后端数据库。</p>
+</div>
+<div class="card">
+<h3>快速导航</h3>
+<div style="display:flex;gap:14px;flex-wrap:wrap;">
+<button class="btn-blue" onclick="switchSection('signup')">注册账号</button>
+<button class="btn-blue" onclick="switchSection('recruit')">前往招募大厅</button>
+</div>
+</div>
+</div>
+
+<div id="login" class="section">
+<div class="card" style="max-width:520px;margin:0 auto;">
+<h2>🔐 用户登录</h2>
+<form id="loginForm">
+<div class="row">
+<label>用户名</label>
+<input type="text" id="loginUsername" required>
+</div>
+<div class="row">
+<label>密码</label>
+<input type="password" id="loginPwd" required>
+</div>
+<button class="btn-blue" type="submit">登录</button>
+</form>
+<div id="loginTip" class="tip"></div>
+<p class="tip">没有账号？<a href="#" onclick="switchSection('signup')">前往学生注册</a></p>
+</div>
+</div>
+
+<div id="signup" class="section">
+<div class="card" style="max-width:520px;margin:0 auto;">
+<h2>📝 学生账号注册</h2>
+<form id="signupForm">
+<div class="row">
+<label>用户名</label>
+<input type="text" id="sigUsername" required placeholder="自定义账号名称">
+</div>
+<div class="row">
+<label>邮箱</label>
+<input type="email" id="sigEmail" required placeholder="填写校园邮箱">
+</div>
+<div class="row">
+<label>密码</label>
+<input type="password" id="sigPwd" required placeholder="设置登录密码">
+</div>
+<button class="btn-blue" type="submit">完成注册</button>
+</form>
+<div id="signupTip" class="tip"></div>
+<p class="tip">已有账号？<a href="#" onclick="switchSection('login')">去登录</a></p>
+</div>
+</div>
+
+<div id="register" class="section">
+<div class="card">
+<h2>📝黑客松活动个人报名</h2>
+<form id="registerForm">
+<div class="row">
+<label>昵称/姓名</label>
+<input type="text" id="regName" required>
+</div>
+<div class="row">
+<label>年级</label>
+<input type="text" id="regGrade" placeholder="例：大二">
+</div>
+<div class="row">
+<label>技能标签（逗号分隔，如前端,Python,产品）</label>
+<input type="text" id="regSkill">
+</div>
+<div class="row">
+<label>想做的项目方向</label>
+<input type="text" id="regWant">
+</div>
+<div class="row">
+<label>可投入时间</label>
+<input type="text" id="regTime" placeholder="例：周末全天">
+</div>
+<div class="row">
+<label>联系方式</label>
+<input type="text" id="regContact">
+</div>
+<button class="btn-blue" type="submit">提交报名</button>
+</form>
+<div id="regTip" class="tip"></div>
+</div>
+<div class="card">
+<h3>已报名列表</h3>
+<div id="registerList"></div>
+</div>
+</div>
+
+<div id="recruit" class="section">
+<div class="card">
+<h2>📋队伍招募大厅</h2>
+<div class="search-box">
+<input type="text" id="search-input" placeholder="搜索招募标题、作者、标签、内容、联系方式...">
+<button id="search-btn">搜索</button>
+</div>
+<button class="btn-blue" onclick="showPublishForm()">+ 发布新招募帖</button>
+<div class="publish-form-wrap" id="publishRecruitWrap" style="display:none;">
+<h3>发布招募</h3>
+<form id="publishRecruitForm">
+<div class="row">
+<label>招募标题</label>
+<input type="text" id="recTitle" required placeholder="例：寻找前端队友开发Web项目">
+</div>
+<div class="row">
+<label>技能标签（逗号隔开）</label>
+<input type="text" id="recTag" placeholder="前端,JS,产品">
+</div>
+<div class="row">
+<label>招募描述</label>
+<textarea id="recContent" placeholder="写清楚项目方向、需要什么队友、时间安排"></textarea>
+</div>
+<div class="row">
+<label>你的联系方式</label>
+<input type="text" id="recContact" placeholder="QQ/微信/邮箱，其他同学联系你用">
+</div>
+<button class="btn-blue" type="submit">发布招募帖</button>
+</form>
+<div id="publishTip" class="tip"></div>
+</div>
+<div class="recruit-list" id="recruit-container" style="margin-top:24px;"></div>
+</div>
+</div>
+
+<div id="submitProject" class="section">
+<div class="card">
+<h2>📦项目提交（仅队长可提交）</h2>
+<form id="projectSubmitForm">
+<div class="row">
+<label>选择你的队伍</label>
+<select id="selectMyTeam"></select>
+</div>
+<div class="row">
+<label>项目名称</label>
+<input type="text" id="projName">
+</div>
+<div class="row">
+<label>项目简介</label>
+<textarea id="projDesc"></textarea>
+</div>
+<div class="row">
+<label>GitHub仓库链接</label>
+<input type="text" id="projGithub">
+</div>
+<div class="row">
+<label>Demo演示链接</label>
+<input type="text" id="projDemo">
+</div>
+<button class="btn-blue" type="submit">提交项目</button>
+</form>
+</div>
+<div class="card">
+<h3>已提交项目列表</h3>
+<div id="projectListWrap"></div>
+</div>
+</div>
+
+<div id="adminPanel" class="section">
+<div class="card">
+<h2>📊活动管理统计面板</h2>
+<div class="stat-row">
+<div class="stat-item">
+<div>报名总人数</div>
+<div style="font-size:26px;font-weight:bold;" id="statRegister">0</div>
+</div>
+<div class="stat-item">
+<div>队伍总数</div>
+<div style="font-size:26px;font-weight:bold;" id="statTeam">0</div>
+</div>
+<div class="stat-item">
+<div>招募帖总数</div>
+<div style="font-size:26px;font-weight:bold;" id="statRecruit">0</div>
+</div>
+<div class="stat-item">
+<div>已提交项目数</div>
+<div style="font-size:26px;font-weight:bold;" id="statProject">0</div>
+</div>
+</div>
+<h4>全部报名人员</h4>
+<div id="adminRegList"></div>
+<br>
+<h4>全部队伍信息</h4>
+<div id="adminTeamList"></div>
+<br>
+<h4>全部提交项目</h4>
+<div id="adminProjList"></div>
+</div>
+</div>
+
+<div id="about" class="section">
+<div class="card">
+<h2>关于 HackMatch & 未央学社</h2>
+<p>HackMatch是面向校园黑客松的MVP组队提交平台，解决黑客松活动中报名、组队混乱、项目材料分散的痛点。</p>
+<br>
+<p>未央学社面向学生开展黑客松、技术沙龙、创作实践等各类活动。</p>
+</div>
+</div>
+</div>
+
+<footer>©2026 未央学社 HackMatch 演示平台 | Mock前端版本</footer>
+<script>
+let users = JSON.parse(localStorage.getItem("hack_users")) || [];
+let currentUser = null;
+let registerList = JSON.parse(localStorage.getItem("hack_register")) || [];
+let recruitList = JSON.parse(localStorage.getItem("hack_recruit")) || [];
+let teamList = JSON.parse(localStorage.getItem("hack_team")) || [];
+let projectList = JSON.parse(localStorage.getItem("hack_project")) || [];
+
+function saveAllData(){
+    localStorage.setItem("hack_users", JSON.stringify(users));
+    localStorage.setItem("hack_register", JSON.stringify(registerList));
+    localStorage.setItem("hack_recruit", JSON.stringify(recruitList));
+    localStorage.setItem("hack_team", JSON.stringify(teamList));
+    localStorage.setItem("hack_project", JSON.stringify(projectList));
+}
+
+function switchSection(id) {
+    document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+function showPublishForm(){
+    const wrap = document.getElementById('publishRecruitWrap');
+    wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+}
+
+//注册
+document.getElementById('signupForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const uname = document.getElementById('sigUsername').value;
+    const email = document.getElementById('sigEmail').value;
+    const pwd = document.getElementById('sigPwd').value;
+    const exist = users.find(u=>u.username===uname);
+    if(exist){
+        document.getElementById('signupTip').innerText="用户名已存在";
+        return;
+    }
+    users.push({username:uname,email:email,password:pwd});
+    saveAllData();
+    document.getElementById('signupTip').innerText="注册成功，可以去登录";
+    this.reset();
+});
+
+//登录
+document.getElementById('loginForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const uname = document.getElementById('loginUsername').value;
+    const pwd = document.getElementById('loginPwd').value;
+    const user = users.find(u=>u.username===uname && u.password===pwd);
+    if(!user){
+        document.getElementById('loginTip').innerText="账号或密码错误";
+        return;
+    }
+    currentUser = user;
+    document.getElementById('loginTip').innerText="登录成功！";
+    switchSection('home');
+});
+
+//活动报名
+document.getElementById('registerForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const obj = {
+        name:document.getElementById('regName').value,
+        grade:document.getElementById('regGrade').value,
+        skill:document.getElementById('regSkill').value,
+        want:document.getElementById('regWant').value,
+        time:document.getElementById('regTime').value,
+        contact:document.getElementById('regContact').value
+    };
+    registerList.push(obj);
+    saveAllData();
+    renderRegisterList();
+    updateStat();
+    this.reset();
+});
+
+function renderRegisterList(){
+    const wrap = document.getElementById('registerList');
+    wrap.innerHTML = "";
+    registerList.forEach(item=>{
+        wrap.innerHTML += `
+        <div class="team-card">
+        <div>姓名：${item.name}</div>
+        <div>年级：${item.grade}</div>
+        <div>技能：${item.skill}</div>
+        <div>方向：${item.want}</div>
+        <div>时间：${item.time}</div>
+        <div>联系方式：${item.contact}</div>
+        </div>`;
+    })
+}
+
+//发布招募帖
+document.getElementById('publishRecruitForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const item = {
+        title:document.getElementById('recTitle').value,
+        tag:document.getElementById('recTag').value,
+        content:document.getElementById('recContent').value,
+        contact:document.getElementById('recContact').value
+    };
+    recruitList.push(item);
+    saveAllData();
+    renderRecruit();
+    updateStat();
+    this.reset();
+    document.getElementById('publishRecruitWrap').style.display="none";
+});
+
+function renderRecruit(){
+    const container = document.getElementById('recruit-container');
+    const keyword = document.getElementById('search-input').value.toLowerCase();
+    container.innerHTML = "";
+    let filter = recruitList;
+    if(keyword){
+        filter = recruitList.filter(r=>{
+            return r.title.toLowerCase().includes(keyword) || r.tag.toLowerCase().includes(keyword)
+            || r.content.toLowerCase().includes(keyword) || r.contact.toLowerCase().includes(keyword);
+        })
+    }
+    if(filter.length===0){
+        container.innerHTML = `<div class="empty-tip">暂无招募信息</div>`;
+        return;
+    }
+    filter.forEach(r=>{
+        container.innerHTML += `
+        <div class="recruit-card">
+        <h3>${r.title}</h3>
+        <div class="meta">标签：${r.tag}</div>
+        <p>${r.content}</p>
+        <p class="meta">联系方式：${r.contact}</p>
+        </div>`;
+    })
+}
+document.getElementById('search-btn').onclick = renderRecruit;
+
+//项目提交
+document.getElementById('projectSubmitForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const obj = {
+        team:document.getElementById('selectMyTeam').value,
+        projName:document.getElementById('projName').value,
+        projDesc:document.getElementById('projDesc').value,
+        github:document.getElementById('projGithub').value,
+        demo:document.getElementById('projDemo').value
+    };
+    projectList.push(obj);
+    saveAllData();
+    renderProjectList();
+    updateStat();
+    this.reset();
+});
+
+function renderProjectList(){
+    const wrap = document.getElementById('projectListWrap');
+    wrap.innerHTML = "";
+    projectList.forEach(p=>{
+        wrap.innerHTML += `
+        <div class="team-card">
+        <h4>${p.projName}</h4>
+        <p>队伍：${p.team}</p>
+        <p>简介：${p.projDesc}</p>
+        <p>GitHub：${p.github}</p>
+        <p>Demo：${p.demo}</p>
+        </div>`;
+    })
+}
+
+function updateStat(){
+    document.getElementById('statRegister').innerText = registerList.length;
+    document.getElementById('statTeam').innerText = teamList.length;
+    document.getElementById('statRecruit').innerText = recruitList.length;
+    document.getElementById('statProject').innerText = projectList.length;
+    let regHtml = "";
+    registerList.forEach(r=>{
+        regHtml += `<div class="team-card">${r.name} | ${r.grade} | ${r.skill}</div>`;
+    })
+    document.getElementById('adminRegList').innerHTML = regHtml;
+    let teamHtml = "";
+    teamList.forEach(t=>{
+        teamHtml += `<div class="team-card">${t.name}</div>`;
+    })
+    document.getElementById('adminTeamList').innerHTML = teamHtml;
+    let projHtml = "";
+    projectList.forEach(p=>{
+        projHtml += `<div class="team-card">${p.projName}</div>`;
+    })
+    document.getElementById('adminProjList').innerHTML = projHtml;
+}
+
+window.onload = function(){
+    renderRecruit();
+    renderRegisterList();
+    renderProjectList();
+    updateStat();
+}
+</script>
+</body>
+</html>
